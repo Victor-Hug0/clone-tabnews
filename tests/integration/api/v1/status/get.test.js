@@ -14,18 +14,22 @@ describe("GET /api/v1/status", () => {
       expect(responseBody.updated_at).toBeDefined();
       expect(responseBody.dependencies.database.db_version).toBeDefined();
       expect(responseBody.dependencies.database.max_connections).toBeDefined();
-      expect(responseBody.dependencies.database.current_connections).toBeDefined();
+      expect(
+        responseBody.dependencies.database.current_connections,
+      ).toBeDefined();
 
       const parsedUpdatedAt = new Date(responseBody.updated_at);
       expect(responseBody.updated_at).toEqual(parsedUpdatedAt.toISOString());
 
-      expect(typeof responseBody.dependencies.database.db_version).toBe("string");
+      expect(typeof responseBody.dependencies.database.db_version).toBe(
+        "string",
+      );
       expect(typeof responseBody.dependencies.database.max_connections).toBe(
         "number",
       );
-      expect(typeof responseBody.dependencies.database.current_connections).toBe(
-        "number",
-      );
+      expect(
+        typeof responseBody.dependencies.database.current_connections,
+      ).toBe("number");
 
       expect(responseBody.dependencies.database.db_version).toEqual("16.0");
 
