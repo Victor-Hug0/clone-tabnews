@@ -17,8 +17,10 @@ async function getHandler(request, response) {
 }
 
 async function postHandler(request, response) {
-    const migratedMigrations = await runMigrations({ dryRun: false });
-    return response.status(migratedMigrations.length > 0 ? 201 : 200).json(migratedMigrations);
+  const migratedMigrations = await runMigrations({ dryRun: false });
+  return response
+    .status(migratedMigrations.length > 0 ? 201 : 200)
+    .json(migratedMigrations);
 }
 
 function getMigrationsOptions(dbClient, dryRun = true) {

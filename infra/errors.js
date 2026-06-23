@@ -19,24 +19,24 @@ export class InternalServerError extends Error {
 }
 
 export class ServiceError extends Error {
-    constructor({ cause, message }) {
-      super(message || "Service Error", {
-        cause,
-      });
-      this.name = "ServiceError";
-      this.action = "Entre em contato com o suporte";
-      this.statusCode = 503;
-    }
-  
-    toJSON() {
-      return {
-        name: this.name,
-        message: this.message,
-        action: this.action,
-        status_code: this.statusCode,
-      };
-    }
+  constructor({ cause, message }) {
+    super(message || "Service Error", {
+      cause,
+    });
+    this.name = "ServiceError";
+    this.action = "Entre em contato com o suporte";
+    this.statusCode = 503;
   }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      status_code: this.statusCode,
+    };
+  }
+}
 
 export class MethodNotAllowedError extends Error {
   constructor() {
