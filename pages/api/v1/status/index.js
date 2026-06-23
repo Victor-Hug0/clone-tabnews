@@ -27,10 +27,9 @@ export default async function status(request, response) {
         },
       },
     });
-
   } catch (error) {
     const publicErrorObject = new InternalServerError({
-      cause: error
+      cause: error,
     });
     console.error(publicErrorObject);
     response.status(500).json(publicErrorObject.toJSON());
