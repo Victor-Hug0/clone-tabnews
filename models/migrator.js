@@ -3,16 +3,16 @@ import { resolve } from "node:path";
 import database from "infra/database";
 
 function getMigrationsOptions(dbClient, dryRun) {
-    return {
-      dbClient,
-      dir: resolve("infra", "migrations"),
-      direction: "up",
-      verbose: true,
-      migrationsTable: "pgmigrations",
-      dryRun,
-    };
-  }
-  
+  return {
+    dbClient,
+    dir: resolve("infra", "migrations"),
+    direction: "up",
+    verbose: true,
+    migrationsTable: "pgmigrations",
+    dryRun,
+  };
+}
+
 async function listPendingMigrations({ dryRun = true } = {}) {
   const dbClient = await database.getNewClient();
 
