@@ -9,15 +9,15 @@ async function create(userData) {
   return newUser;
 
   async function runInsertQuery(userData) {
-      const result = await database.query({
-          text: `
+    const result = await database.query({
+      text: `
               INSERT INTO users (username, email, password)
               VALUES ($1, $2, $3)
               RETURNING *
           `,
-          values: [userData.username, userData.email, userData.password],
-      });
-      return result.rows[0];
+      values: [userData.username, userData.email, userData.password],
+    });
+    return result.rows[0];
   }
 
   async function validateUniqueEmail(email) {
@@ -76,8 +76,8 @@ async function getByUsername(username) {
 }
 
 const user = {
-    create,
-    getByUsername,
+  create,
+  getByUsername,
 };
 
 export default user;

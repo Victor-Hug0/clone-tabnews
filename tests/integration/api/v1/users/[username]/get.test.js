@@ -10,24 +10,23 @@ beforeAll(async () => {
 describe("GET /api/v1/users/[username]", () => {
   describe("Anonymous user", () => {
     test("With exact case match", async () => {
-      const response1 = await fetch(
-        `http://localhost:3000/api/v1/users`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: "MesmoCase",
-            email: "mesmo.case@example.com",
-            password: "123456",
-          }),
+      const response1 = await fetch(`http://localhost:3000/api/v1/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          username: "MesmoCase",
+          email: "mesmo.case@example.com",
+          password: "123456",
+        }),
+      });
 
       expect(response1.status).toBe(201);
 
-      const response2 = await fetch(`http://localhost:3000/api/v1/users/MesmoCase`);
+      const response2 = await fetch(
+        `http://localhost:3000/api/v1/users/MesmoCase`,
+      );
 
       expect(response2.status).toBe(200);
 
@@ -48,24 +47,23 @@ describe("GET /api/v1/users/[username]", () => {
     });
 
     test("With case mismatch", async () => {
-      const response1 = await fetch(
-        `http://localhost:3000/api/v1/users`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: "MismatchCase",
-            email: "mismatch.case@example.com",
-            password: "123456",
-          }),
+      const response1 = await fetch(`http://localhost:3000/api/v1/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          username: "MismatchCase",
+          email: "mismatch.case@example.com",
+          password: "123456",
+        }),
+      });
 
       expect(response1.status).toBe(201);
 
-      const response2 = await fetch(`http://localhost:3000/api/v1/users/mismatchcase`);
+      const response2 = await fetch(
+        `http://localhost:3000/api/v1/users/mismatchcase`,
+      );
 
       expect(response2.status).toBe(200);
 
@@ -85,7 +83,9 @@ describe("GET /api/v1/users/[username]", () => {
       expect(Date.parse(response2Body.updated_at)).not.toBeNaN();
     });
     test("With non-existent username", async () => {
-      const response = await fetch(`http://localhost:3000/api/v1/users/non-existent-username`);
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/non-existent-username`,
+      );
 
       expect(response.status).toBe(404);
 
