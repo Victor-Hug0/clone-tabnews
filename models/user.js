@@ -72,7 +72,12 @@ async function update(username, userInputValues) {
         UPDATE users SET username = $1, email = $2, password = $3, updated_at = timezone('utc', now()) WHERE id = $4
         RETURNING *
       `,
-      values: [userWithUpdatedValues.username, userWithUpdatedValues.email, userWithUpdatedValues.password, userWithUpdatedValues.id],
+      values: [
+        userWithUpdatedValues.username,
+        userWithUpdatedValues.email,
+        userWithUpdatedValues.password,
+        userWithUpdatedValues.id,
+      ],
     });
     return result.rows[0];
   }

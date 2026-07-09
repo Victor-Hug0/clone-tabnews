@@ -40,10 +40,16 @@ describe("POST /api/v1/users", () => {
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
 
       const userInDatabase = await user.getByUsername("John Doe");
-      const correctPassword = await password.compare("123456", userInDatabase.password);
+      const correctPassword = await password.compare(
+        "123456",
+        userInDatabase.password,
+      );
       expect(correctPassword).toBe(true);
 
-      const incorrectPassword = await password.compare("1234567", userInDatabase.password);
+      const incorrectPassword = await password.compare(
+        "1234567",
+        userInDatabase.password,
+      );
       expect(incorrectPassword).toBe(false);
     });
 

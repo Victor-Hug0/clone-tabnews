@@ -17,6 +17,9 @@ async function getHandler(request, response) {
 async function patchHandler(request, response) {
   const userInputValues = request.body;
 
-  const updatedUser = await user.update(request.query.username, userInputValues);
+  const updatedUser = await user.update(
+    request.query.username,
+    userInputValues,
+  );
   response.status(200).json(updatedUser);
 }
