@@ -45,6 +45,28 @@ async function getByUsername(username) {
   }
 }
 
+async function getByEmail(email) {
+  const userFound = await runSelectQuery(email);
+  return userFound;
+
+  async function runSelectQuery(email) {
+    const result = await database.query({
+      text: `
+        SELECT * FROM users WHERE LOWER(email) = LOWER($1) LIMIT 1
+      `,
+      values: [email],
+    });
+
+    if (result.rowCount === 0) {
+      throw new NotFoundError({
+        message: "O e-mail informado não foi encontrado.",
+        action: "Verifique se o e-mail está correto e tente novamente.",
+      });
+    }
+    return result.rows[0];
+  }
+}
+
 async function update(username, userInputValues) {
   const userFound = await getByUsername(username);
 
@@ -123,6 +145,7 @@ async function hashPasswordInObject(userData) {
 const user = {
   create,
   getByUsername,
+  getByEmail,
   update,
 };
 
