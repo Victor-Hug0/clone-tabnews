@@ -1,8 +1,8 @@
 import { createRouter } from "next-connect";
-import user from "models/user.js";
-import password from "models/password.js";
-import { UnauthorizedError } from "infra/errors.js";
 import controller from "infra/controller.js";
+import authentication from "models/authentication.js";
+import session from "models/session.js";
+import * as cookie from "cookie";
 
 const router = createRouter();
 
@@ -13,26 +13,19 @@ export default router.handler(controller.errorHandlers);
 async function postHandler(request, response) {
   const userInputvalues = request.body;
 
-  try {
-    const storedUser = await user.getByEmail(userInputvalues.email);
-    const correctPasswordMatch = await password.compare(
-      userInputvalues.password,
-      storedUser.password,
-    );
+  const authenticatedUser = await authentication.getAuthenticatedUser(userInputvalues.email, userInputvalues.password);
 
-    if (!correctPasswordMatch) {
-      throw new UnauthorizedError({
-        message: "Senha inválida.",
-        action: "Verifique se a senha está correta e tente novamente.",
-      });
-    }
-  } catch (error) {
-    throw new UnauthorizedError({
-      message: "Email ou senha inválidos.",
-      action:
-        "Verifique se o email e a senha estão corretos e tente novamente.",
-    });
-  }
+  const newSession = await session.create(authenticatedUser.id);
 
-  return response.status(201).json({});
+  const setCookie = cookie.serialize("session_id", newSession.token, {
+    path: "/",
+    httpOnly: true,
+    sameSite: "Strict",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: session.EXPIRATION_IN_MILLISECONDS / 1000,
+  });
+
+  response.setHeader("Set-Cookie", setCookie);
+
+  return response.status(201).json(newSession);
 }
