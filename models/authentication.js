@@ -50,8 +50,6 @@ async function getAuthenticatedUser(providedEmail, providedPassword) {
   }
 }
 
-
-
 const authentication = {
   getAuthenticatedUser,
 };

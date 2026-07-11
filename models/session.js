@@ -26,7 +26,7 @@ async function create(userId) {
 
 const session = {
   create,
-  EXPIRATION_IN_MILLISECONDS
-}
+  EXPIRATION_IN_MILLISECONDS,
+};
 
 export default session;
