@@ -1,5 +1,4 @@
 import orchestrator from "tests/orchestrator.js";
-import { describe } from "yargs";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -32,9 +31,9 @@ describe("Use case: Registration flow (all successful)", () => {
       username: "RegistrationFlow",
       email: "registration.flow@example.com",
       password: createUserResponseBody.password,
-      features: [],
-      createdAt: createUserResponseBody.createdAt,
-      updatedAt: createUserResponseBody.updatedAt,
+      features: ["read:activation_token"],
+      created_at: createUserResponseBody.created_at,
+      updated_at: createUserResponseBody.updated_at,
     });
   });
 
