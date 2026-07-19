@@ -13,7 +13,6 @@ beforeAll(async () => {
 describe("Use case: Registration flow (all successful)", () => {
   let createUserResponseBody;
   let activationTokenId;
-  let sessionId;
   let activatedUser;
   let createSessionResponseBody;
 
@@ -81,7 +80,11 @@ describe("Use case: Registration flow (all successful)", () => {
     expect(Date.parse(activationResponseBody.used_at)).not.toBeNull();
 
     activatedUser = await user.getByUsername("RegistrationFlow");
-    expect(activatedUser.features).toEqual(["create:session", "read:session"]);
+    expect(activatedUser.features).toEqual([
+      "create:session",
+      "read:session",
+      "update:user",
+    ]);
   });
 
   test("Login", async () => {
@@ -122,7 +125,7 @@ describe("Use case: Registration flow (all successful)", () => {
       username: "RegistrationFlow",
       email: "registration.flow@example.com",
       password: createUserResponseBody.password,
-      features: ["create:session", "read:session"],
+      features: ["create:session", "read:session", "update:user"],
       created_at: createUserResponseBody.created_at,
       updated_at: activatedUser.updated_at.toISOString(),
     });
