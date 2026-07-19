@@ -18,7 +18,12 @@ async function create(userData) {
               VALUES ($1, $2, $3, $4)
               RETURNING *
           `,
-      values: [userData.username, userData.email, userData.password, userData.features],
+      values: [
+        userData.username,
+        userData.email,
+        userData.password,
+        userData.features,
+      ],
     });
     return result.rows[0];
   }
@@ -91,6 +96,19 @@ async function getByEmail(email) {
       });
     }
     return result.rows[0];
+  }
+}
+
+async function setFeatures(userId, features) {
+  const updatedUser = await runUpdateQuery(userId, features);
+  return updatedUser;
+
+  async function runUpdateQuery(userId, features) {
+    const results = await database.query({
+      text: `UPDATE users SET features = $1, updated_at = timezone('utc', now()) WHERE id = $2 RETURNING *`,
+      values: [features, userId],
+    });
+    return results.rows[0];
   }
 }
 
@@ -175,6 +193,7 @@ const user = {
   getByEmail,
   getById,
   update,
+  setFeatures,
 };
 
 export default user;

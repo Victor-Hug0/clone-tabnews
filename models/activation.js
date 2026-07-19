@@ -2,6 +2,7 @@ import email from "infra/email.js";
 import database from "infra/database.js";
 import webserver from "infra/webserver.js";
 import { NotFoundError } from "infra/errors.js";
+import user from "models/user.js";
 
 const EXPIRATION_IN_MILLISECONDS = 60 * 15 * 1000; // 15 minutes
 
@@ -38,12 +39,11 @@ async function create(userId) {
 async function getValidById(activationTokenId) {
   const newToken = await runSelectQuery(activationTokenId);
   return newToken;
-}
 
   async function runSelectQuery(activationTokenId) {
     const results = await database.query({
       text: `SELECT * FROM user_activation_tokens
-      WHERE id = $1 AND expires_at > NOW() AND used_at IS NULL
+      WHERE id = $1 AND expires_at > timezone('utc', now()) AND used_at IS NULL
       LIMIT 1`,
       values: [activationTokenId],
     });
@@ -57,10 +57,34 @@ async function getValidById(activationTokenId) {
 
     return results.rows[0];
   }
+}
+
+async function markTokenAsUsed(activationTokenId) {
+  const usedToken = await runUpdateQuery(activationTokenId);
+  return usedToken;
+
+  async function runUpdateQuery(activationTokenId) {
+    const results = await database.query({
+      text: `UPDATE user_activation_tokens SET used_at = timezone('utc', now()), updated_at = timezone('utc', now())
+      WHERE id = $1 RETURNING *`,
+      values: [activationTokenId],
+    });
+
+    return results.rows[0];
+  }
+}
+
+async function activateUserByUserId(userId) {
+  const activatedUser = await user.setFeatures(userId, ["create:session"]);
+  return activatedUser;
+}
+
 const activation = {
   sendEmailToUser,
   create,
   getValidById,
-}
+  markTokenAsUsed,
+  activateUserByUserId,
+};
 
 export default activation;
