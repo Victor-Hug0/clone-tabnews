@@ -9,6 +9,7 @@ import {
 import * as cookie from "cookie";
 import session from "models/session.js";
 import user from "models/user.js";
+import authorization from "models/authorization.js";
 
 function onNoMatchHandler(request, response) {
   const publicErrorObject = new MethodNotAllowedError();
@@ -97,7 +98,7 @@ function injectAnonymousUser(request) {
 
 function canRequest(feature) {
   return function canRequestMiddleware(request, response, next) {
-    if (!request.context.user.features.includes(feature)) {
+    if (!authorization.can(request.context.user, feature)) {
       throw new ForbiddenError({
         message: "Você não tem permissão para executar esta ação.",
         action: `Verifique se você tem a feature "${feature}" e tente novamente.`,
