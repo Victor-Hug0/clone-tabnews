@@ -17,20 +17,17 @@ describe("Use case: Registration flow (all successful)", () => {
   let createSessionResponseBody;
 
   test("Create user account", async () => {
-    const createUserResponse = await fetch(
-      `http://localhost:3000/api/v1/users`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: "RegistrationFlow",
-          email: "registration.flow@example.com",
-          password: "RegistrationFlowPassword",
-        }),
+    const createUserResponse = await fetch(`${webserver.origin}/api/v1/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({
+        username: "RegistrationFlow",
+        email: "registration.flow@example.com",
+        password: "RegistrationFlowPassword",
+      }),
+    });
     expect(createUserResponse.status).toBe(201);
 
     createUserResponseBody = await createUserResponse.json();
@@ -66,7 +63,7 @@ describe("Use case: Registration flow (all successful)", () => {
 
   test("Activate user account", async () => {
     const activationResponse = await fetch(
-      `http://localhost:3000/api/v1/activations/${activationTokenId}`,
+      `${webserver.origin}/api/v1/activations/${activationTokenId}`,
       {
         method: "PATCH",
       },
@@ -87,7 +84,7 @@ describe("Use case: Registration flow (all successful)", () => {
 
   test("Login", async () => {
     const createSessionResponse = await fetch(
-      `http://localhost:3000/api/v1/sessions`,
+      `${webserver.origin}/api/v1/sessions`,
       {
         method: "POST",
         headers: {
@@ -107,7 +104,7 @@ describe("Use case: Registration flow (all successful)", () => {
 
   test("Get user information", async () => {
     const userInformationResponse = await fetch(
-      `http://localhost:3000/api/v1/user`,
+      `${webserver.origin}/api/v1/user`,
       {
         method: "GET",
         headers: {
