@@ -44,7 +44,7 @@ function setSessionCookie(response, sessionToken) {
     secure: process.env.NODE_ENV === "production",
     maxAge: session.EXPIRATION_IN_MILLISECONDS / 1000,
     path: "/",
-    sameSite: "Strict",
+    sameSite: "lax",
   });
 
   response.setHeader("Set-Cookie", sessionCookie);
@@ -56,7 +56,7 @@ function clearSessionCookie(response) {
     secure: process.env.NODE_ENV === "production",
     maxAge: -1,
     path: "/",
-    sameSite: "Strict",
+    sameSite: "lax",
   });
 
   response.setHeader("Set-Cookie", sessionCookie);
