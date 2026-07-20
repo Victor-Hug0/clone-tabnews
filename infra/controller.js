@@ -38,25 +38,25 @@ function onErrorHandler(error, request, response) {
   response.status(publicErrorObject.statusCode).json(publicErrorObject);
 }
 
-async function setSessionCookie(response, sessionToken) {
+function setSessionCookie(response, sessionToken) {
   const sessionCookie = cookie.serialize("session_id", sessionToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     maxAge: session.EXPIRATION_IN_MILLISECONDS / 1000,
     path: "/",
-    sameSite: "Strict",
+    sameSite: "Lax",
   });
 
   response.setHeader("Set-Cookie", sessionCookie);
 }
 
-async function clearSessionCookie(response) {
+function clearSessionCookie(response) {
   const sessionCookie = cookie.serialize("session_id", "invalid", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     maxAge: -1,
     path: "/",
-    sameSite: "Strict",
+    sameSite: "Lax",
   });
 
   response.setHeader("Set-Cookie", sessionCookie);
