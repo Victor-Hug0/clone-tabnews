@@ -304,6 +304,9 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(
         userPatchResponseBody.updated_at > userPatchResponseBody.created_at,
       ).toBe(true);
+
+      const userInDatabase = await user.getByUsername(createdUser2.username);
+      expect(userInDatabase.email).toBe("uniquemail2@curso.dev");
     });
 
     test("With new 'password'", async () => {
