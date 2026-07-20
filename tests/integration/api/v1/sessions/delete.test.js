@@ -16,8 +16,12 @@ describe("DELETE /api/v1/sessions", () => {
         username: "UserWithValidSession",
       });
 
-      const sessionObject = await orchestrator.createSessionObject(
+      const activatedUser = await orchestrator.activateUserByUserId(
         createdUser.id,
+      );
+
+      const sessionObject = await orchestrator.createSessionObject(
+        activatedUser.id,
       );
 
       const response = await fetch(`${webserver.origin}/api/v1/sessions`, {
@@ -57,7 +61,7 @@ describe("DELETE /api/v1/sessions", () => {
         maxAge: -1,
         path: "/",
         httpOnly: true,
-        sameSite: "Strict",
+        sameSite: "Lax",
       });
 
       const doubleCheckResponse = await fetch(
