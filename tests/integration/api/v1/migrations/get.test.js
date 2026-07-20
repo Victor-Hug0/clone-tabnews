@@ -31,9 +31,8 @@ describe("GET /api/v1/migrations", () => {
       const activatedUser = await orchestrator.activateUserByUserId(
         createUser.id,
       );
-      const sessionObject = await orchestrator.createSessionObject(
-        activatedUser.id,
-      );
+      const sessionObject =
+        await orchestrator.createSessionObject(activatedUser);
 
       const response = await fetch(`${webserver.origin}/api/v1/migrations`, {
         headers: {
@@ -59,9 +58,8 @@ describe("GET /api/v1/migrations", () => {
       const activatedUser = await orchestrator.activateUserByUserId(
         createUser.id,
       );
-      const sessionObject = await orchestrator.createSessionObject(
-        activatedUser.id,
-      );
+      const sessionObject =
+        await orchestrator.createSessionObject(activatedUser);
       await orchestrator.addFeaturesToUser(activatedUser, ["read:migration"]);
 
       const response = await fetch(`${webserver.origin}/api/v1/migrations`, {

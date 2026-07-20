@@ -42,9 +42,8 @@ describe("GET /api/v1/status", () => {
       const activatedUser = await orchestrator.activateUserByUserId(
         createUser.id,
       );
-      const sessionObject = await orchestrator.createSessionObject(
-        activatedUser.id,
-      );
+      const sessionObject =
+        await orchestrator.createSessionObject(activatedUser);
       await orchestrator.addFeaturesToUser(activatedUser, ["read:status:all"]);
 
       const response = await fetch(`${webserver.origin}/api/v1/status`, {

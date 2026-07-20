@@ -50,9 +50,8 @@ describe("POST /api/v1/migrations", () => {
       const activatedUser = await orchestrator.activateUserByUserId(
         createUser.id,
       );
-      const sessionObject = await orchestrator.createSessionObject(
-        activatedUser.id,
-      );
+      const sessionObject =
+        await orchestrator.createSessionObject(activatedUser);
       await orchestrator.addFeaturesToUser(activatedUser, ["create:migration"]);
 
       const response = await fetch(`${webserver.origin}/api/v1/migrations`, {
