@@ -15,8 +15,12 @@ describe("GET /api/v1/user", () => {
         username: "UserWithValidSession",
       });
 
-      const sessionObject = await orchestrator.createSessionObject(
+      const activatedUser = await orchestrator.activateUserByUserId(
         createdUser.id,
+      );
+
+      const sessionObject = await orchestrator.createSessionObject(
+        activatedUser.id,
       );
 
       const response = await fetch(`http://localhost:3000/api/v1/user`, {
@@ -34,12 +38,12 @@ describe("GET /api/v1/user", () => {
 
       const responseBody = await response.json();
       expect(responseBody).toEqual({
-        id: createdUser.id,
+        id: activatedUser.id,
         username: "UserWithValidSession",
-        email: createdUser.email,
-        password: createdUser.password,
-        created_at: createdUser.created_at.toISOString(),
-        updated_at: createdUser.updated_at.toISOString(),
+        email: activatedUser.email,
+        features: ["create:session", "read:session", "update:user"],
+        created_at: activatedUser.created_at.toISOString(),
+        updated_at: activatedUser.updated_at.toISOString(),
       });
 
       const renewedSessionObject = await session.getValidByToken(
@@ -76,8 +80,12 @@ describe("GET /api/v1/user", () => {
         username: "UserWithHalfwayExpiredSession",
       });
 
-      const sessionObject = await orchestrator.createSessionObject(
+      const activatedUser = await orchestrator.activateUserByUserId(
         createdUser.id,
+      );
+
+      const sessionObject = await orchestrator.createSessionObject(
+        activatedUser.id,
       );
 
       jest.useRealTimers();
@@ -92,12 +100,12 @@ describe("GET /api/v1/user", () => {
 
       const responseBody = await response.json();
       expect(responseBody).toEqual({
-        id: createdUser.id,
+        id: activatedUser.id,
         username: "UserWithHalfwayExpiredSession",
-        email: createdUser.email,
-        password: createdUser.password,
-        created_at: createdUser.created_at.toISOString(),
-        updated_at: createdUser.updated_at.toISOString(),
+        email: activatedUser.email,
+        features: ["create:session", "read:session", "update:user"],
+        created_at: activatedUser.created_at.toISOString(),
+        updated_at: activatedUser.updated_at.toISOString(),
       });
 
       const renewedSessionObject = await session.getValidByToken(
@@ -201,6 +209,22 @@ describe("GET /api/v1/user", () => {
         path: "/",
         httpOnly: true,
         sameSite: "Strict",
+      });
+    });
+  });
+
+  describe("Anonymous user", () => {
+    test("With valid session", async () => {
+      const response = await fetch(`http://localhost:3000/api/v1/user`);
+      expect(response.status).toBe(403);
+
+      const responseBody = await response.json();
+      expect(responseBody).toEqual({
+        name: "ForbiddenError",
+        message: "Você não tem permissão para executar esta ação.",
+        action:
+          'Verifique se você tem a feature "read:session" e tente novamente.',
+        status_code: 403,
       });
     });
   });

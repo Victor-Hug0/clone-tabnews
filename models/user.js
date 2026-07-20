@@ -6,6 +6,7 @@ async function create(userData) {
   await validateUniqueEmail(userData.email);
   await validateUniqueUsername(userData.username);
   await hashPasswordInObject(userData);
+  injectDefaultFeatures(userData);
 
   const newUser = await runInsertQuery(userData);
   return newUser;
@@ -13,13 +14,22 @@ async function create(userData) {
   async function runInsertQuery(userData) {
     const result = await database.query({
       text: `
-              INSERT INTO users (username, email, password)
-              VALUES ($1, $2, $3)
+              INSERT INTO users (username, email, password, features)
+              VALUES ($1, $2, $3, $4)
               RETURNING *
           `,
-      values: [userData.username, userData.email, userData.password],
+      values: [
+        userData.username,
+        userData.email,
+        userData.password,
+        userData.features,
+      ],
     });
     return result.rows[0];
+  }
+
+  function injectDefaultFeatures(userData) {
+    userData.features = ["read:activation_token"];
   }
 }
 
@@ -86,6 +96,35 @@ async function getByEmail(email) {
       });
     }
     return result.rows[0];
+  }
+}
+
+async function setFeatures(userId, features) {
+  const updatedUser = await runUpdateQuery(userId, features);
+  return updatedUser;
+
+  async function runUpdateQuery(userId, features) {
+    const results = await database.query({
+      text: `UPDATE users SET features = $1, updated_at = timezone('utc', now()) WHERE id = $2 RETURNING *`,
+      values: [features, userId],
+    });
+    return results.rows[0];
+  }
+}
+
+async function addFeatures(userId, features) {
+  const updatedUser = await runUpdateQuery(userId, features);
+  return updatedUser;
+
+  async function runUpdateQuery(userId, features) {
+    const results = await database.query({
+      text: `
+      UPDATE users SET features = array_cat(features, $1), updated_at = timezone('utc', now())
+      WHERE id = $2
+      RETURNING *`,
+      values: [features, userId],
+    });
+    return results.rows[0];
   }
 }
 
@@ -170,6 +209,8 @@ const user = {
   getByEmail,
   getById,
   update,
+  setFeatures,
+  addFeatures,
 };
 
 export default user;
